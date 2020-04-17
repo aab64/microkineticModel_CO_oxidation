@@ -110,7 +110,7 @@ hold on
 % Plot CO2 production rate
 yyaxis left
 rCO2s = rates(:, 5) + rates(:, 9);
-plot(xO2s * 100, rCO2s, '-x', 'markersize', 6, 'color', [0 0 0.7])
+plot(xO2s * 100, rCO2s, '-x', 'color', [0 0 0.7])
 ylabel('TOF (1/(sites.s))', 'color', 'k')
 
 % Plot coverage
