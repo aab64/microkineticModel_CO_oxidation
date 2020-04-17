@@ -12,6 +12,7 @@ This folder contains the following scripts for simulating kinetics of carbon mon
 7. k_ads.m
 8. k_des.m
 9. k_arr.m
+10. get_CO_oxidation_jac.m
 
 ## Running simulations
 
@@ -38,6 +39,8 @@ Files 5-9 are used to set up the ODEs:
 - File 6 computes the reaction rate constants, using files 7-9 to obtain expressions for adsorption, desorption and Arrhenius reaction.
 - The reaction barriers in file 6 are taken from Farsig et al. [1].
 - The expressions in files 7-9 are taken from Filot (2018) [2].
+
+File 10 supplies the analytic Jacobian for the tanks-in-series ODEs. This is suggested to improve efficiency of *ode23s* in the Matlab documentation. However, sufficient stability has been experienced using *ode15s* which is significantly faster than *ode23s* for the current cases. 
 
 [1] Falsig, H., Hvolbaek, B., Kristensen, I.S., Jiang, T., Bligaard, T., Christensen, C.H. and Norskov, J.K., 2008. Trends in the catalytic CO oxidation activity of nanoparticles. Angewandte Chemie International Edition, 47(26), pp.4835-4839. 
 
