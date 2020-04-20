@@ -55,6 +55,7 @@ disp('~~~~~~~~~~~~~~~~~~~~~')
 yn = 4;                            % Number of variables
 rn = 9;                            % Number of rate terms
 y0 = zeros(yn, 1);                 % Solution vector
+% y0(4) = 0.8;                     % Change to start with oxidised catalyst
 rates = zeros(length(xO2s), rn);
 cover = zeros(length(xO2s), yn);
 
@@ -89,13 +90,14 @@ for i = 1:length(xO2s)
         
     % Plot time-dependent rates and coverages
     if plotFigs
-        figure('units', 'normalized', 'outerposition', [0 0 3.3 3.3])
+        figure('PaperUnits', 'inches', 'PaperPosition', [0 0 5 3.3])
         set(gcf, 'color', 'white')
         plot(t, y(:, 1), '-', t, y(:, 2), '--', t, y(:, 3), '-.',...
             t, y(:, 4), ':', t, 1 - sum(y, 2), '-.')
-        ylabel('Coverage')
+        ylabel('Site fraction')
+        xlabel('Time (s)')
         set(gca, 'ylim', [0, 1])
-        legend('CO', 'O_2', 'O', 'oxide', 'free', 'location', 'west')
+        legend('CO', 'O_2', 'O', 'oxide', 'free', 'location', 'east')
         title(['xO_2 = ' num2str(xO2s(i))])
     end
 
@@ -135,7 +137,7 @@ l.Orientation = 'horizontal';
 
 %% File output
 if writeFiles
-    fending = [num2str(P2) 'bar_' num2str(T) 'K'];
+    fending = [num2str(p) 'bar_' num2str(T) 'K'];
     saveas(gcf, ['figs/cover_rate_' fending '.png'])
     csvwrite(['data/cover_' fending '.csv'], cover);
     csvwrite(['data/concs_' fending '.csv'], concs);
