@@ -10,16 +10,12 @@ set(0, 'DefaultLineMarkerSize', 10);
 % Options
 writeFiles = true;                 % Write files 
 plotFigs = false;                  % Plot figures of transient behaviour
-is_batch = true;                   % Batch or straight
+is_batch = false;                  % Batch or straight
 
 % Free rate parameters
-deactivation = 0.0;                % Amount of deactivated rxn with oxide
+deactivation = 1.19;               % Amount of deactivated rxn with oxide
                                    %  - multiplies foward rxn rate
-if (deactivation > 0)
-    Ea_oxide = 136.5e3;            % Cu oxidation activation energy (J/mol)
-else
-    Ea_oxide = 204.4e3;            % Cu oxidation activation energy (J/mol)
-end
+Ea_oxide = 45e3;                   % Cu oxidation activation energy (J/mol)
 
 % Parameters
 T = 673;                           % Temperature (K)
@@ -64,12 +60,12 @@ A = h * D;                         % Area (m2) pi * D^2
 V = L * A;                         % Volume (m3)
 
 % Catalyst features
-rhoCat = 2e20;                     % Catalyst sites/m2
 nCat = 1000;                       % Number of catalysts in arrays
 cwidth = 120e-9;                   % Catalyst nanoparticle width (m)
 ccollar = 40e-9 * pi * cwidth;     % Catalyst side (m2)
 ccircle = pi * cwidth^2 * 0.25;    % Catalyst top (m2)
 Acat = nCat * (ccircle + ccollar); % Total catalyst area (m2)
+rhoCat = 4e19;                     % Catalyst sites/m2
 
 % Tanks in series model
 Ltank = L / ntanks;                % Length of one tank (m)
@@ -169,7 +165,7 @@ for i = 1:length(xO2s)
                 t, y(:, current + 2), '--',...
                 t, y(:, current + 3), '-.',...
                 t, y(:, current + 4), ':',...
-                t, 1 - allsites, '-.')
+                t, allsites, '-.')
             hold on
             ylabel('Coverage')
             set(gca, 'ylim', [0, 1])
@@ -193,6 +189,20 @@ for i = 1:length(xO2s)
     disp('---------------------')
 end
 
+disp('=====================')
+imax = find(concs(:, end) == max(concs(:, end)));
+disp(['Onset at xO2 = ' num2str(xO2s(imax) * 100, '%1.3f') '%']);
+
+xCO2max = concs(imax, end) * 1.01325 / p;
+xCO2fin = concs(end, end) * 1.01325 / p;
+Xmax = 0.5 * xCO2max / xO2s(imax);
+Xfin = 0.5 * xCO2fin / xO2s(end);
+disp(['Final conversion = ' num2str(100 * Xfin / Xmax, '%1.3f') '%']);
+
+active_sites = 1 - cover(end, end);
+disp(['Final active site fraction = ' num2str(active_sites, '%1.3f')])
+disp('=====================')
+
 %% Results: Coverage vs CO2 concentration
 figure('PaperUnits', 'inches', 'PaperPosition', [0 0 5 3.3])
 set(gcf, 'color', 'white')
@@ -212,7 +222,7 @@ ylabel('Concentration (%)', 'color', 'k')
 yyaxis right
 cls = colormap(copper);
 step = round(size(cls, 1) / ntanks);
-active_sites = 1 - cover(:, 4);
+active_sites =  1 - cover(:, 4);
 plot(xO2s * 100, active_sites, '-', 'color', cls(1, :))
 for i = 2:ntanks
     i1 = (yn - 3) + (i - 1) * (yn - 3);

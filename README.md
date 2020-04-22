@@ -13,6 +13,8 @@ This folder contains the following scripts for simulating kinetics of carbon mon
 8. k_des.m
 9. k_arr.m
 10. get_CO_oxidation_jac.m
+11. solve_parameter_optimisation.m
+12. parameter_optimisation.m 
 
 ## Running simulations
 
@@ -30,7 +32,9 @@ Run file 2 to solve the ODEs provided in file 4.
 
 ### 3. Changing the parameters
 
-Simulation parameters can be modified in the Settings section of files 1 and 2. 
+Simulation parameters can be modified in the Settings section of files 1 and 2.  
+
+Files 11 and 12 can be used to solve for parameters that meet certain conditions, for example to match experimentally observed phenomena. 
 
 ## Computing reaction rates 
 
