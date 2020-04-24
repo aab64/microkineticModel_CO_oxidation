@@ -8,33 +8,33 @@ set(0, 'DefaultLineLineWidth', 2);
 set(0, 'DefaultLineMarkerSize', 10);
 
 % Options
-writeFiles = true;                 % Write files 
+writeFiles = false;                % Write files 
 plotFigs = false;                  % Plot figures of transient behaviour
-is_batch = false;                  % Batch or straight
+is_batch = true;                   % Batch or straight
 
 % Free rate parameters
-deactivation = 1.19;               % Amount of deactivated rxn with oxide
+deactivation = 1.33;               % Amount of deactivated rxn with oxide
                                    %  - multiplies foward rxn rate
-Ea_oxide = 45e3;                   % Cu oxidation activation energy (J/mol)
+Ea_oxide = 110e3;                  % Cu oxidation activation energy (J/mol)
 
 % Parameters
 T = 673;                           % Temperature (K)
 P2 = 4;                            % System inlet pressure (bar)
 pCO2 = 0;                          % CO2 inlet pressure (bar)
-xO2s = 0:0.0002:0.005;             % O2 fraction added to Ar
+xO2s = 0:0.0001:0.005;             % O2 fraction added to Ar
 xCO = 0.07;                        % CO fraction
 atm = 101325;                      % Convert atm to Pa
 tf = 3600;                         % Simulation time (s)
 
 if ~is_batch
     % Straight
-    ntanks = 10;                   % Number of tanks (CSTRs)
+    ntanks = 9;                   % Number of tanks (CSTRs)
     if P2 == 2
         p = 1.2;                   % Pressure (bar) at 673 K
-        F = 3.2e-13;               % Flow rate (m3/s) at 673 K
+        F = 5.5e-13;               % Flow rate (m3/s) at 673 K
     else
         p = 2.5;                   % Pressure (bar) at 673 K
-        F = 3.5e-13;               % Flow rate (m3/s) at 673 K
+        F = 5.6e-13;               % Flow rate (m3/s) at 673 K
     end
     L = 216e-6;                    % Reactor length (m)
     D = 10e-6;                     % Reactor diameter (m)
@@ -44,10 +44,10 @@ else
     ntanks = 1;                    % Number of tanks (CSTRs)
     if P2 == 2
         p = 1.0;                   % Pressure (bar)
-        F = 3.8e-13;               % Flow rate (m3/s)
+        F = 7.3e-13;               % Flow rate (m3/s)
     else
         p = 2.2;                   % Pressure (bar)
-        F = 4.1e-13;               % Flow rate (m3/s)
+        F = 7.5e-13;               % Flow rate (m3/s)
     end
     L = 180e-6;                    % Reactor length (m)
     D = 120e-6;                    % Reactor diameter (m)
@@ -65,7 +65,7 @@ cwidth = 120e-9;                   % Catalyst nanoparticle width (m)
 ccollar = 40e-9 * pi * cwidth;     % Catalyst side (m2)
 ccircle = pi * cwidth^2 * 0.25;    % Catalyst top (m2)
 Acat = nCat * (ccircle + ccollar); % Total catalyst area (m2)
-rhoCat = 4e19;                     % Catalyst sites/m2
+rhoCat = 6e19;                     % Catalyst sites/m2
 
 % Tanks in series model
 Ltank = L / ntanks;                % Length of one tank (m)

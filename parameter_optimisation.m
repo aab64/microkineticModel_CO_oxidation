@@ -15,7 +15,7 @@ Ea_oxide = abs(opt_vec(2)) * 1e5;  % Cu oxidation activation energy (J/mol)
 T = 673;                           % Temperature (K)
 P2 = 4;                            % System inlet pressure (bar)
 pCO2 = 0;                          % CO2 inlet pressure (bar)
-xO2s = 0:0.0002:0.005;             % O2 fraction added to Ar
+xO2s = 0:0.0001:0.005;             % O2 fraction added to Ar
 xCO = 0.07;                        % CO fraction
 tf = 3600;                         % Simulation time (s)
 
@@ -23,10 +23,10 @@ tf = 3600;                         % Simulation time (s)
 ntanks = 1;                        % Number of tanks (CSTRs)
 if P2 == 2
     p = 1.0;                       % Pressure (bar)
-    F = 3.8e-13;                   % Flow rate (m3/s)
+    F = 7.3e-13;                   % Flow rate (m3/s)
 else
     p = 2.2;                       % Pressure (bar)
-    F = 4.1e-13;                   % Flow rate (m3/s)
+    F = 7.5e-13;                   % Flow rate (m3/s)
 end
 L = 180e-6;                        % Reactor length (m)
 D = 120e-6;                        % Reactor diameter (m)
@@ -36,7 +36,7 @@ h = 100e-9;                        % Height (m)
 A = h * D;                         % Area (m2) pi * D^2
 
 % Catalyst features
-rhoCat = 4e19;                     % Catalyst sites/m2
+rhoCat = 6e19;                     % Catalyst sites/m2
 nCat = 1000;                       % Number of catalysts in arrays
 cwidth = 120e-9;                   % Catalyst nanoparticle width (m)
 ccollar = 40e-9 * pi * cwidth;     % Catalyst side (m2)
@@ -97,20 +97,42 @@ for i = 1:length(xO2s)
     end
 end
 
-active_sites = sum(cover(end, end - 3:end - 1));
 target1 = 0.003;
 imax = find(concs(:, end) == max(concs(:, end)));
 xO2max = xO2s(imax);
-f(1) = abs(xO2max - target1 - active_sites) * 100;
+f(1) = (xO2max - target1) * 100;
 
 target2 = 0.2;
 xCO2max = concs(imax, end) * 1.01325 / p;
 xCO2fin = concs(end, end) * 1.01325 / p;
 Xmax = 0.5 * xCO2max / xO2max;
 Xfin = 0.5 * xCO2fin / xO2s(end);
-f(2) = abs(Xfin / Xmax - target2);
-
+f(2) = (Xfin / Xmax - target2);
+ 
 % target3 = 0;
-% f(2) = abs(active_sites - target3);
+% active_sites = sum(cover(end, end - 3:end - 1));
+% f(3) = abs(active_sites - target3);
+
+
+% target1 = 0.003;
+% imax = find(concs(:, end) == max(concs(:, end)));
+% xO2max = xO2s(imax);
+% fa = (xO2max - target1)^2 * 100;
+% 
+% target2 = 0.16;
+% xCO2max = concs(imax, end) * 1.01325 / p;
+% xCO2fin = concs(end, end) * 1.01325 / p;
+% Xmax = 0.5 * xCO2max / xO2max;
+% Xfin = 0.5 * xCO2fin / xO2s(end);
+% fb = (Xfin - target2)^2;
+%  
+% target3 = 0.8;
+% active_sites = sum(cover(end, end - 3:end - 1));
+% fc = (Xmax - target3)^2;
+% 
+% fd = active_sites;
+% 
+% f = fa + fb + fc;
+
 
 end

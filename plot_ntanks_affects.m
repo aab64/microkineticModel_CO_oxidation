@@ -7,7 +7,7 @@ set(0,'defaultAxesFontSize',12)
 set(0, 'DefaultLineLineWidth', 1);
 set(0, 'DefaultLineMarkerSize', 10);
 
-xO2s = 0:0.0002:0.005;
+xO2s = 0:0.0001:0.005;
 xO2s = xO2s * 100;
 
 figure('PaperUnits', 'inches', 'PaperPosition', [0 0 5 3.3])
@@ -19,6 +19,9 @@ set(gcf, 'color', 'white')
 hold on
 cls = colormap(copper);
 step = round(size(cls, 1) / 10);
+
+xO2maxs = zeros(10, 1);
+Xmaxs = zeros(10, 1);
 
 for ntanks = 1:10
     fending = ['4bar_' num2str(ntanks) 'tanks_s'];
@@ -51,6 +54,24 @@ for ntanks = 1:10
     end
     title(['n=' num2str(ntanks)])
     set(gca, 'xlim', [0 0.3])
+    
+    disp('=====================')
+    imax = find(concs(:, end) == max(concs(:, end)));
+    disp(['Onset at xO2 = ' num2str(xO2s(imax) * 100, '%1.3f') '%']);
+    
+    xO2maxs(ntanks) = xO2s(imax) * 100;
+    
+    xCO2max = concs(imax, end) * 1.01325 / 2.5;
+    xCO2fin = concs(end, end) * 1.01325 / 2.5;
+    Xmax = 0.5 * xCO2max / xO2s(imax);
+    Xfin = 0.5 * xCO2fin / xO2s(end);
+    disp(['Final conversion = ' num2str(100 * Xfin / Xmax, '%1.3f') '%']);
+    
+    Xmaxs(ntanks) = 100 * Xfin / Xmax;
+    
+    active_sites = 1 - cover(end, end);
+    disp(['Final active site fraction = ' num2str(active_sites, '%1.3f')])
+    disp('=====================')
 end
 
 figure(1)
@@ -64,3 +85,23 @@ saveas(gcf, ['figs/co2_conc_vs_ntanks_' fending '.png'])
 
 figure(2)
 saveas(gcf, ['figs/cover_vs_ntanks_' fending '.png'])
+
+figure('PaperUnits', 'inches', 'PaperPosition', [0 0 5 3.3])
+set(gcf, 'color', 'white')
+hold on
+yyaxis left
+plot(1:10, xO2maxs, '-o', 'color', [0.7 0 0], 'Linewidth', 2)
+ylabel('O_2 inlet with max conversion (%)')
+yyaxis right
+plot(1:10, Xmaxs, '-^', 'color', [0 0 0.7], 'Linewidth', 2)
+ylabel('Conversion at max O_2 inlet (%)')
+xlabel('Number of tanks')
+h = gca;
+h.YAxis(1).Color = 'k';
+h.YAxis(2).Color = 'k';
+q1 = quiver(2.2, 23.5, -1, 0, 0, 'Linewidth', 2, 'color', [0.7 0 0], 'MaxHeadSize', 2);
+q1.LineStyle = '-';
+q2 = quiver(7, 24, 1, 0, 0, 'Linewidth', 2, 'color', [0 0 0.7], 'MaxHeadSize', 2);
+q2.LineStyle = '-';
+set(gca, 'YTick', 23:27)
+saveas(gcf, ['figs/params_vs_ntanks_' fending '.png'])
