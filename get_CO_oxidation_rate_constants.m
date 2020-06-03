@@ -33,10 +33,10 @@ function rate_constants = get_CO_oxidation_rate_constants(params)
     Earev_O = 248.22e3;
         
     % Adsorption/desorption rate constants
-    k_ads_CO = k_ads(T, A, mCO);
-    k_ads_O2 = k_ads(T, A, mO2);    
-    k_des_CO = k_des(T, A, mCO, sigmaCO, thetaCO, EadsCO);
-    k_des_O2 = k_des(T, A, mO2, sigmaO2, thetaO2, EadsO2);
+    k_ads_CO = k_ads(T, mCO);
+    k_ads_O2 = k_ads(T, mO2);    
+    k_des_CO = k_des(T, mCO, sigmaCO, thetaCO, EadsCO);
+    k_des_O2 = k_des(T, mO2, sigmaO2, thetaO2, EadsO2);
 
     % Reaction rate constants
     k_fwd = k_arr(T, Afwd, Eafwd);

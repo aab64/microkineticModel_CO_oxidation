@@ -15,7 +15,7 @@ is_batch = true;                   % Batch or straight
 % Free rate parameters
 deactivation = 1.33;               % Amount of deactivated rxn with oxide
                                    %  - multiplies foward rxn rate
-Ea_oxide = 110e3;                  % Cu oxidation activation energy (J/mol)
+Ea_oxide = 84e3;                   % Cu oxidation activation energy (J/mol)
 
 % Parameters
 T = 673;                           % Temperature (K)

@@ -12,22 +12,18 @@ writeFiles = false;                % Write files
 plotFigs = true;                   % Plot figures of transient behaviour
 
 % Free rate parameters
-deactivation = 0.2;                % Amount of deactivated rxn with oxide
+deactivation = 1.33;               % Amount of deactivated rxn with oxide
                                    %  - multiplies foward rxn rate
-if (deactivation > 0)
-    Ea_oxide = 136.5e3;            % Cu oxidation activation energy (J/mol)
-else
-    Ea_oxide = 204.4e3;            % Cu oxidation activation energy (J/mol)
-end
+Ea_oxide = 84e3;                   % Cu oxidation activation energy (J/mol)
 
 % Parameters
 T = 673;                           % Temperature (K)
-p = 4;                             % Pressure (bar)
+p = 2;                             % Pressure (bar)
 pCO2 = 0;                          % CO2 inlet pressure (bar)
 xO2s = 0:0.001:0.005;              % O2 fraction added to Ar
 xCO = 0.07;                        % CO fraction
 atm = 101325;                      % Convert atm to Pa
-tf = 3600;                         % Simulation time (s)
+tf = 0.05;                         % Simulation time (s)
 
 % Catalyst features
 nCat = 1;                          % Number of catalysts in arrays
@@ -92,13 +88,21 @@ for i = 1:length(xO2s)
     if plotFigs
         figure('PaperUnits', 'inches', 'PaperPosition', [0 0 5 3.3])
         set(gcf, 'color', 'white')
-        plot(t, y(:, 1), '-', t, y(:, 2), '--', t, y(:, 3), '-.',...
-            t, y(:, 4), ':', t, 1 - sum(y, 2), '-.')
-        ylabel('Site fraction')
-        xlabel('Time (s)')
+        hold on
+        plot(t * 1e3, y(:, 1), '-', 'color', 'r')
+        plot(t * 1e3, y(:, 2), '--', 'color', [0.7 0.7 0])
+        plot(t * 1e3, y(:, 3), '--', 'color', [0 0 0.7])
+        plot(t * 1e3, y(:, 4), '-.', 'color', [0 0.7 0])
+        plot(t * 1e3, 1 - sum(y, 2), 'k:')
+        ylabel('Fraction')
+        xlabel('Time (ms)')
         set(gca, 'ylim', [0, 1])
-        legend('CO', 'O_2', 'O', 'oxide', 'free', 'location', 'east')
+        l = legend('CO', 'O_2', 'O', 'Oxide', 'Free', 'location', 'east');  
+        l.Box = 'Off';
+        box on
+        set(gca, 'LineWidth', 2)
         title(['xO_2 = ' num2str(xO2s(i))])
+        saveas(gcf, 'figs/All_cover.png')
     end
 
     disp('---------------------')
@@ -112,15 +116,15 @@ hold on
 % Plot CO2 production rate
 yyaxis left
 rCO2s = rates(:, 5) + rates(:, 9);
-plot(xO2s * 100, rCO2s, '-x', 'color', [0 0 0.7])
+plot(xO2s * 100, rCO2s, '-', 'color', [0 0 0.7])
 ylabel('TOF (1/(sites.s))', 'color', 'k')
 
 % Plot coverage
 yyaxis right
 active_sites = 1 - cover(:, end);
-plot(xO2s * 100, active_sites, '-+', 'color', [0.7 0 0])
+plot(xO2s * 100, active_sites, '-', 'color', [0.7 0 0])
 xlabel('O_2 concentration (%)')
-ylabel('Active sites fraction')
+ylabel('Active fraction')
 
 % Format axes
 h = gca;
@@ -132,8 +136,11 @@ h.YAxis(2).Limits = [0, 1];
 child_handles = allchild(h);
 l = legend([child_handles(end), child_handles(1)], 'TOF', 'Sites');
 l.Box = 'Off';
-l.Location = 'northoutside';
+l.Location = 'north';
 l.Orientation = 'horizontal';
+
+box on
+h.LineWidth = 2;
 
 %% File output
 if writeFiles
